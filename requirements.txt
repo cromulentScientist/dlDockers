@@ -1,0 +1,8 @@
+jupyterlab>=3.0.0
+matplotlib
+numpy
+scipy
+pandas
+scikit-learn
+tqdm
+statsmodels

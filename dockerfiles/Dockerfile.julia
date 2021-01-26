@@ -1,0 +1,33 @@
+FROM nvidia/cuda:11.2.0-runtime-ubuntu20.04 AS jupyter-base
+WORKDIR /src
+# Install Python and its tools
+RUN apt update -q && apt install -yq --no-install-recommends \
+    apt-utils \
+    python3.9 \
+    python3-pip \
+    python3-setuptools \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    python3.9-dev \
+    vim curl \
+    wget \
+    git \
+    zip
+RUN python3.9 -m pip install -q pip --upgrade
+
+COPY ./installation/requirements.txt .
+# Install all basic packages
+RUN python3.9 -m pip install -q --no-cache-dir -r ./requirements.txt
+
+# Here we use a base image by its name - "jupyter-base"
+FROM jupyter-base
+
+# WORKDIR /src
+COPY ./installation/install_jl.sh .
+# Install additional packages
+RUN chmod +x install_jl.sh && \
+    bash ./install_jl.sh
+
+CMD mkdir -p /src/notebooks/ && \
+    jupyter notebook --no-browser --allow-root --ip=0.0.0.0
