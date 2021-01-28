@@ -26,14 +26,17 @@ FROM jupyter-base
 # WORKDIR /src
 # COPY ./installation/install_jl.sh .
 # Install additional packages
+
+RUN python3.9 -m pip install -q torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 RUN python3.9 -m pip install -q --no-cache-dir \
     cython \
     opencv-python \
     nltk \
     spacy \
     sktime \
-    scikit-image
+    scikit-image \
+    tensorboardX
 
-
-CMD mkdir -p /src/notebooks/ && \
+CMD git clone https://github.com/pytorch/examples.git notebooks/torch-examples && \
+    git clone https://github.com/fastai/fastbook.git notebooks/fastbook && \
     jupyter notebook --no-browser --allow-root --ip=0.0.0.0
