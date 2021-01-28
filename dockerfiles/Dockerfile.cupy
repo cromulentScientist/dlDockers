@@ -28,13 +28,8 @@ FROM jupyter-base
 # COPY ./installation/install_jl.sh .
 # Install additional packages
 RUN pip3 install --no-cache-dir \
-    cupy-cuda110 \
-    cython \
-    opencv-python \
-    nltk \
-    spacy \
-    sktime \
-    scikit-image
+    cupy-cuda110 optuna
+    
 
 CMD mkdir -p /src/notebooks/ && \
     jupyter notebook --no-browser --allow-root --ip=0.0.0.0
