@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.0.3-cudnn8-devel-ubuntu20.04 AS jupyter-base
+FROM nvidia/cuda:11.0.3-cudnn8-devel-ubuntu20.04 AS jupyter-base-cuda110-cudnn
 WORKDIR /src
 # Install Python and its tools
 RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
@@ -22,9 +22,9 @@ COPY ./installation/requirements.txt .
 RUN pip3 install -q --no-cache-dir -r ./requirements.txt
 
 # Starting from the base image
-FROM jupyter-base
+FROM jupyter-base-cuda110-cudnn
 
-# Install additional packages 
+# Install tensorflow-gpu and additional packages 
 RUN pip3 install -q --no-cache-dir \
     "tensorflow-gpu>=2.4.0" \
     cython \
@@ -34,6 +34,7 @@ RUN pip3 install -q --no-cache-dir \
     sktime \
     scikit-image
     
+# Clone examples and launch jupyter
 CMD git clone https://github.com/tensorflow/examples.git notebooks/tf-examples && \
     git clone https://github.com/floydhub/tensorflow-examples.git notebooks/floydhub-tf && \
     jupyter notebook --no-browser --allow-root --ip=0.0.0.0

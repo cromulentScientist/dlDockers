@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.0.3-runtime-ubuntu20.04 AS jupyter-base
+FROM nvidia/cuda:11.0.3-runtime-ubuntu20.04 AS jupyter-base-cuda110
 WORKDIR /src
 # Install Python and its tools
 RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
@@ -20,13 +20,10 @@ COPY ./installation/requirements.txt .
 # Install all basic packages
 RUN python3.9 -m pip install -q --no-cache-dir -r ./requirements.txt
 
-# Here we use a base image by its name - "jupyter-base"
-FROM jupyter-base
+# Starting from the base image"
+FROM jupyter-base-cuda110
 
-# WORKDIR /src
-# COPY ./installation/install_jl.sh .
-# Install additional packages
-
+# Install PyTorch and additional packages
 RUN python3.9 -m pip install -q torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
 RUN python3.9 -m pip install -q --no-cache-dir \
     cython \
@@ -37,6 +34,7 @@ RUN python3.9 -m pip install -q --no-cache-dir \
     scikit-image \
     tensorboardX
 
+# Clone examples and launch jupyter
 CMD git clone https://github.com/pytorch/examples.git notebooks/torch-examples && \
     git clone https://github.com/fastai/fastbook.git notebooks/fastbook && \
     jupyter notebook --no-browser --allow-root --ip=0.0.0.0

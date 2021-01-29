@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.0.3-cudnn8-devel-ubuntu20.04 AS jupyter-base
+FROM nvidia/cuda:11.0.3-cudnn8-devel-ubuntu20.04 AS jupyter-base-cuda110-cudnn
 WORKDIR /src
 # Install Python and its tools
 RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
@@ -22,12 +22,12 @@ COPY ./installation/requirements.txt .
 RUN pip3 install -q --no-cache-dir -r ./requirements.txt
 
 # Starting from the base image
-FROM jupyter-base
+FROM jupyter-base-cuda110-cudnn
 
-# Install additional packages 
+# Install cupy packages 
 RUN pip3 install -q --no-cache-dir \
     cupy-cuda110 optuna
     
-
+# Launch Jupyter
 CMD mkdir -p /src/notebooks/ && \
     jupyter notebook --no-browser --allow-root --ip=0.0.0.0

@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.0.3-runtime-ubuntu20.04 AS jupyter-base
+FROM nvidia/cuda:11.0.3-runtime-ubuntu20.04 AS jupyter-base-cuda110
 WORKDIR /src
 # Install Python and its tools
 RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
@@ -20,16 +20,15 @@ COPY ./installation/requirements.txt .
 # Install all basic packages
 RUN python3.9 -m pip install -q --no-cache-dir -r ./requirements.txt
 
-# Here we use a base image by its name - "jupyter-base"
-FROM jupyter-base
+# Starting from the base image
+FROM jupyter-base-cuda110
 
-# WORKDIR /src
 COPY ./installation/install_jl.sh .
-# Install additional packages
+# Install Julia from script
 RUN chmod +x install_jl.sh && \
     bash ./install_jl.sh
 
-# CMD mkdir -p /src/notebooks/ && \
+# Clone examples and launch jupyter
 CMD git clone https://github.com/JuliaAcademy/JuliaTutorials.git notebooks/julia-tutorials && \
     git clone https://github.com/UCIDataScienceInitiative/IntroToJulia.git notebooks/uci-julia-intro && \
     jupyter notebook --no-browser --allow-root --ip=0.0.0.0
