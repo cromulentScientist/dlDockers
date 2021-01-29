@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.0.3-devel-ubuntu20.04 AS jupyter-base
+FROM nvidia/cuda:11.0.3-cudnn8-devel-ubuntu20.04 AS jupyter-base
 WORKDIR /src
 # Install Python and its tools
 RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
@@ -15,7 +15,7 @@ RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
     wget \
     git \
     zip
-RUN pip3 install --no-cache-dir -U install setuptools pip
+RUN pip3 install -q --no-cache-dir -U install setuptools pip
 
 COPY ./installation/requirements.txt .
 # Install all basic packages
@@ -25,7 +25,7 @@ RUN pip3 install -q --no-cache-dir -r ./requirements.txt
 FROM jupyter-base
 
 # Install additional packages 
-RUN pip3 install --no-cache-dir \
+RUN pip3 install -q --no-cache-dir \
     cupy-cuda110 optuna
     
 

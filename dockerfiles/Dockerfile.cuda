@@ -35,5 +35,5 @@ RUN python3.9 -m pip install -q --no-cache-dir \
     scikit-image
 
 
-CMD mkdir -p /src/notebooks/ && \
+CMD git clone https://github.com/ageron/handson-ml2.git notebooks/sklearn-book && \
     jupyter notebook --no-browser --allow-root --ip=0.0.0.0

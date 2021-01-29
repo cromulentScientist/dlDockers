@@ -1,7 +1,7 @@
-FROM nvidia/cuda:11.2.0-runtime-ubuntu20.04 AS jupyter-base
+FROM nvidia/cuda:11.0.3-runtime-ubuntu20.04 AS jupyter-base
 WORKDIR /src
 # Install Python and its tools
-RUN apt update -q && apt install -yq --no-install-recommends \
+RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
     apt-utils \
     python3.9 \
     python3-pip \
@@ -14,7 +14,7 @@ RUN apt update -q && apt install -yq --no-install-recommends \
     wget \
     git \
     zip
-RUN python3.9 -m pip install -q pip --upgrade
+RUN python3.9 -m pip install -q --no-cache-dir -U install setuptools pipe
 
 COPY ./installation/requirements.txt .
 # Install all basic packages
@@ -29,5 +29,7 @@ COPY ./installation/install_jl.sh .
 RUN chmod +x install_jl.sh && \
     bash ./install_jl.sh
 
-CMD mkdir -p /src/notebooks/ && \
+# CMD mkdir -p /src/notebooks/ && \
+CMD git clone https://github.com/JuliaAcademy/JuliaTutorials.git notebooks/julia-tutorials && \
+    git clone https://github.com/UCIDataScienceInitiative/IntroToJulia.git notebooks/uci-julia-intro && \
     jupyter notebook --no-browser --allow-root --ip=0.0.0.0
