@@ -14,7 +14,7 @@ RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
     wget \
     git \
     zip
-RUN python3.9 -m pip install -q --no-cache-dir -U install setuptools pipe
+RUN python3.9 -m pip install -q --no-cache-dir -U install setuptools pip
 
 COPY ./installation/requirements.txt .
 # Install all basic packages
